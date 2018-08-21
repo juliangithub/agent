@@ -1,8 +1,5 @@
-/******************************************************
-*these code can be used as lib.
-*some of them is copyed from ohers, chengqiuping, etc.
-******************************************************/
-#include <apmib.h>
+
+
 #include "driver_api.h"
 
 #define NONE_CLIENT		"\"0.0.0.0\":\"00:00:00:00:00:00\""
@@ -250,5 +247,44 @@ err:
 		free(buf);
 
 	return nBytesSent;
+}
+
+int cpu_used_percent(void *paramt)
+{
+	FILE *fp = NULL;
+	char line[128] = {0};
+	unsigned long user=0, system=0, nice=0, idle=0;
+	unsigned long total = 0;
+	
+	if((fp = popen("cat /proc/stat | grep cpu0", "r")) != NULL){
+		fgets(line, sizeof(line), fp);
+		pclose(fp);
+		sscanf(line, "%*s %lu %lu %lu %lu", &user, &system, &nice, &idle);
+	}
+	
+	total = user + system + nice + idle;
+	if(total == 0) return LIB_FAILD;
+
+	sprintf(paramt, "%.2lf", 100.00*(user + system + nice)/total);
+	return LIB_SUCCESS;
+}
+
+
+int ram_used_percent(void *paramt)
+{
+	FILE *fp = NULL;
+	unsigned long total = 0;
+	unsigned long used = 0;
+	char line[128] = {0};
+	
+	if((fp = popen("free | grep Mem:", "r")) != NULL){
+		fgets(line, sizeof(line), fp);
+		pclose(fp);
+		sscanf(line, "%*s %lu %lu", &total, &used);
+	}
+	
+	if(total == 0) return LIB_FAILD;
+	sprintf(paramt, "%.2lf", 100.00*used/total);
+	return LIB_SUCCESS;
 }
 

@@ -1,11 +1,11 @@
-CFLAGS += $(COMMON_CFLAGS) -lm -DCONFIG_SKY_ALARM
+CFLAGS += $(COMMON_CFLAGS) -lm 
 
-TARGET=sky_alarm
+TARGET=agent
 DEPEND=$(TARGET).dep
 SRC=$(wildcard *.c)
 OBJ=$(patsubst %.c, %.o, $(SRC))
 
-APMIBLIB=../boa/apmib/libapmib.so
+LIB=data_tree.so
 
 all:
 	make dep-$(DEPEND)
@@ -17,8 +17,8 @@ dep-$(DEPEND):
 		$(CC) $(CFLAGS) -MM $${file} >> $(DEPEND); \
 	done
 
-tag-$(TARGET): $(OBJ) $(APMIBLIB)
-	$(CC) $(CFLAGS) -o $(TARGET) $(OBJ) $(APMIBLIB)
+tag-$(TARGET): $(OBJ) $(LIB)
+	$(CC) $(CFLAGS) -o $(TARGET) $(OBJ) $(LIB)
 
 clean:
 	-rm -rf *.o $(TARGET) $(DEPEND)

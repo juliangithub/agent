@@ -20,6 +20,13 @@ typedef enum
 	RET_ERR_GENERAL = 3,
 }RET;
 	
+	/** @def MAX(a, b)
+		Computers the maximum of a and b. */
+#define MAX(a,b) ((a) > (b) ? (a) : (b))
+	
+	/** @def MIN(a, b)
+		Computers the minimum of a and b. */
+#define MIN(a,b) ((a) > (b) ? (b) : (a))
 
 static inline int dump_buf(unsigned char *packet, int buf_len, char *filename, int line)
 {

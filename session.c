@@ -167,44 +167,72 @@ int init_paket(trsf_buf *trsfb, CONFIG_PKT *config)
 
 int parse_recv_data(trsf_buf *trsfb)
 {
+	int ret;
+	JSON_REQ_MODE_T req_mode = JSON_REQ_NOSPT;
+	char json_buf[2048] = {0};
 	cJSON *element = NULL;
 	char *obj = NULL;
-	dump_buf(trsfb->data, trsfb->data_len, __FILE__, __LINE__);
+
 	obj = strchr(trsfb->data, '{');
-	dump_buf(obj, trsfb->data_len, __FILE__, __LINE__);
-	cJSON *json_root = cJSON_Parse(obj);
+	cJSON *root = cJSON_Parse(obj);
 	int err_code = 0;
-	if (!json_root) {
+	if (!root) {
 		dlog_err("cJSON Parse faild !");
 		return RET_INVALID_PARMT;
 	}
 	
-	cJSON_Print(json_root);
-	element = cJSON_GetObjectItem(json_root, "error");
-	if(element->type == cJSON_String && element->valuestring != NULL)
-	{
-		err_code = atoi(element->valuestring);
-	}
-	else if(element->type == cJSON_Number)
-	{
-		err_code = element->valueint;
-	}
-	else{
-		dlog_err("invalid error code %s! \n", element->string);
-	}
+	cJSON_Print(root);
 
-	element = cJSON_GetObjectItem(json_root, "challange");
-	if(element->type == cJSON_String && element->valuestring != NULL)
+	cJSON *p_req_mode = cJSON_GetObjectItem(root, "req_mode");
+
+	if(p_req_mode == NULL )
 	{
-		dlog_info("last challenge:%s \n", alarm_pkt.challenge);
-		dlog_info("new challenge:%s \n", element->valuestring);
-		strncpy(alarm_pkt.challenge, element->valuestring, sizeof(alarm_pkt.challenge));
+		cJSON_Delete(root);
+		JSON_RET(trsfb, JSON_ERR_BADVALUE);
+		return;
 	}
-	else{
-		dlog_err("invalid challange code %s! \n", element->string);
+	dlog_debug("p_req_mode: %s \t", p_req_mode->valuestring);
+	if(strcmp(p_req_mode->valuestring, "get")==0)
+	{
+		req_mode = JSON_REQ_GET;
+	}
+	else if(strcmp(p_req_mode->valuestring, "set")==0)
+	{
+		req_mode = JSON_REQ_SET;
+	}
+	else
+	{	
+		cJSON_Delete(root);
+		JSON_RET(trsfb, JSON_ERR_WRONGTYPE);
+		return;
 	}
 	
-	cJSON_Delete(json_root);
+	switch(req_mode)
+	{
+		case JSON_REQ_GET:
+			ret = get_jsonpkt(root, json_buf, sizeof(json_buf));
+			if(ret == JSON_ERR_NOERROR)
+			{
+				dlog_debug("get response:%s", json_buf);
+				//build_ret_packet(trsfb, json_buf);
+			}
+			else
+			{
+				JSON_RET(trsfb, ret);
+			}
+			break;
+			
+		case JSON_REQ_SET:
+			ret = set_jsonpkt(root);
+			JSON_RET(trsfb, ret);
+			break;
+			
+		default:
+			JSON_RET(trsfb, ret);
+	}
+
+	cJSON_Delete(root);
+
 	return RET_SUCCESS;
 }
 
