@@ -7,6 +7,7 @@
 #include "net.h"
 #include "session.h"
 #include "utils.h"
+#include "dlog.h"
 
 static CONFIG_PKT g_conf_pkt = {0x0};
 static trsf_buf	g_trsfb = {
@@ -18,10 +19,12 @@ static trsf_buf	g_trsfb = {
 static int initial()
 {
 	char *packet = NULL;
+	#if 0
 	if(init_data_tree() == 0) {
 		dlog_err("%s:%d: apmib_init error\n", __FUNCTION__, __LINE__);
 		return -1;
 	}
+	#endif
 	read_config(&g_conf_pkt);
 	packet = (char*)malloc(TRSF_DATA_SIZE);
 

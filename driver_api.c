@@ -124,11 +124,11 @@ iw_get_ext(int skfd, char *ifname, int request, struct iwreq *pwrq)
 
 
 
-static int parse_dhcp_lease(char **ppStart, unsigned long *size, char *ip, char *mac, char *liveTime, char *hostname)
+static int parse_arp_table(char **ppStart, unsigned long *size, char *ip, char *mac, int *flag, char *device)
 {
 	unsigned long tmp_expires = 0;
 	
-	struct dhcpOfferedAddr entry;
+	struct arp_entry entry;
 	u_int8_t empty_haddr[16]; 
     
      	memset(empty_haddr, 0, 16); 
@@ -168,7 +168,7 @@ static int parse_dhcp_lease(char **ppStart, unsigned long *size, char *ip, char 
 
 
 
-int get_dhcp_client_list_json(char *json_buf, int buf_size)
+int get_arp_list_json(char *json_buf, int buf_size)
 {
 	FILE *fp;
 	int nBytesSent=0;
@@ -179,26 +179,18 @@ int get_dhcp_client_list_json(char *json_buf, int buf_size)
 	unsigned long fileSize=0;
 	char json_item[128];
 	int item_len;
-	// siganl DHCP server to update lease file
-	snprintf(tmpBuf, 100, "%s/%s.pid", _DHCPD_PID_PATH, _DHCPD_PROG_NAME);
-	pid = get_pid(tmpBuf);
-	snprintf(tmpBuf, 100, "kill -SIGUSR1 %d\n", pid);
-	
-	if ( pid > 0)
-	{
-		//kill(pid, SIGUSR1);
-		system(tmpBuf);
-	}
-	usleep(1000);
 
-	if ( stat(_PATH_DHCPS_LEASES, &status) < 0 )
+	int flag = 0;
+	char device[65]={0x0};
+	
+	if ( stat(_ARP_LIST, &status) < 0 )
 		goto err;
 
 	fileSize=status.st_size;
 	buf = malloc(fileSize);
 	if ( buf == NULL )
 		goto err;
-	fp = fopen(_PATH_DHCPS_LEASES, "r");
+	fp = fopen(_ARP_LIST, "r");
 	if ( fp == NULL )
 		goto err;
 
@@ -208,7 +200,7 @@ int get_dhcp_client_list_json(char *json_buf, int buf_size)
 	ptr = buf;
 	
 	while (1) {
-		ret = parse_dhcp_lease(&ptr, &fileSize, ipAddr, macAddr, liveTime, hostname);
+		ret = parse_arp_table(&ptr, &fileSize, ipAddr, macAddr, &flag, device);
 
 		if (ret < 0 )
 			break;
@@ -263,10 +255,10 @@ int cpu_used_percent(void *paramt)
 	}
 	
 	total = user + system + nice + idle;
-	if(total == 0) return LIB_FAILD;
+	if(total == 0) return RET_FAILD;
 
 	sprintf(paramt, "%.2lf", 100.00*(user + system + nice)/total);
-	return LIB_SUCCESS;
+	return RET_SUCCESS;
 }
 
 
@@ -283,8 +275,8 @@ int ram_used_percent(void *paramt)
 		sscanf(line, "%*s %lu %lu", &total, &used);
 	}
 	
-	if(total == 0) return LIB_FAILD;
+	if(total == 0) return RET_FAILD;
 	sprintf(paramt, "%.2lf", 100.00*used/total);
-	return LIB_SUCCESS;
+	return RET_SUCCESS;
 }
 

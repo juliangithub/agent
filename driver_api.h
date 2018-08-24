@@ -22,12 +22,16 @@
 #define _DHCPD_PID_PATH		"/var/run"
 #define _PATH_DHCPS_LEASES	"/var/lib/misc/udhcpd.leases"
 
+#define _ARP_LIST		"/proc/net/arp"
+
 struct dhcpOfferedAddr {
 		u_int8_t chaddr[16];
 		u_int32_t yiaddr;		/* network order */
 		u_int32_t expires;		/* host order */
 		char hostname[64];
 };
+
+
 
 #define SSID_LEN 32
 typedef struct _bss_info {
@@ -58,6 +62,6 @@ getWlBssInfo(char *interface, bss_info *pInfo);
 static int
 iw_get_ext(int skfd, char *ifname, int request, struct iwreq *pwrq);
 
-int get_dhcp_client_list_json(char *json_buf, int buf_size);
+int get_arp_list_json(char *json_buf, int buf_size);
 
 #endif

@@ -29,7 +29,7 @@
 
 #include "net.h"
 #include "utils.h"
-
+#include "dlog.h"
 int init_socket(int *sock)
 {
     int ret = -1;
