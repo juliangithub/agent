@@ -4,7 +4,7 @@
 #include <unistd.h>
 
 #include "config.h"
-#include "net.h"
+#include "transfer.h"
 #include "session.h"
 #include "utils.h"
 #include "dlog.h"

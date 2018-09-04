@@ -1,0 +1,8 @@
+session.o: session.c utils.h config.h cJSON.h net.h session.h
+net.o: net.c net.h utils.h dlog.h
+config.o: config.c config.h utils.h
+main.o: main.c config.h net.h session.h utils.h dlog.h
+cJSON.o: cJSON.c cJSON.h
+dispatch.o: dispatch.c dispatch.h cJSON.h utils.h
+sysinfo.o: sysinfo.c sysinfo.h
+utils.o: utils.c utils.h
