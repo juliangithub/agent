@@ -14,7 +14,8 @@
 int sock_transfer(int sock, trsf_buf *trsfb)
 {
 	int ret = -1;
-	sock_tcp_send( sock, trsfb->data, unsigned int buf_len)
+	sock_tcp_send( sock, trsfb->data,  trsfb->data_len)
+
 #if defined(__MINGW32__)
     sleep(2*1000);
 #else

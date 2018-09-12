@@ -30,14 +30,14 @@
 #include "utils.h"
 #include "dlog.h"
 
-int sock_tcp_send(int sock, unsigned char *buf, unsigned int buf_len)
+int sock_tcp_send(int sock, unsigned char *data, unsigned int data_len)
 {
 	int  ret = -1;
     struct timeval timeout;
     fd_set fds;
     int max_fd ;
 
-    if(sock < 0 || !buf || !buf_len)
+    if(sock < 0 || !data || !data_len)
     {
         dlog_err("Invalid params!");
         return RET_INVALID_PARMT;
@@ -59,7 +59,7 @@ int sock_tcp_send(int sock, unsigned char *buf, unsigned int buf_len)
 
     if(FD_ISSET(sock,&fds))
     {
-        ret = send(sock, (const char *)buf, buf_len, 0);
+        ret = send(sock, (const char *)data, data_len, 0);
 		if(ret == -1)
         {
             dlog_err("send data failed!");
