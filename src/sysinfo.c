@@ -10,19 +10,23 @@
 *
 ================================================================*/
 #include "sysinfo.h"
-
+#include "utils.h"
 
 #define NONE_CLIENT		"\"0.0.0.0\":\"00:00:00:00:00:00\""
 //#define NONE_CLIENT		"\"\":\"\""
 
 static int parse_arp_table(char **ppStart, unsigned long *size, char *ip, char *mac, int *flag, char *device)
 {
-	unsigned long tmp_expires = 0;
-	
+	static int num = 11;
+	#if 1
+		sprintf(ip, "192.168.88.%d", num);
+		sprintf(mac, "a4:a8:0f:11:22:%d", num);
+	#else
 	struct arp_entry entry;
 	u_int8_t empty_haddr[16]; 
-    
-     	memset(empty_haddr, 0, 16); 
+
+	unsigned long tmp_expires = 0;
+     memset(empty_haddr, 0, 16); 
 	if ( *size < sizeof(entry) )
 		return -1;
 
@@ -54,6 +58,7 @@ static int parse_arp_table(char **ppStart, unsigned long *size, char *ip, char *
 			(tmp_expires/60)/60, (tmp_expires/60)%60, tmp_expires%60);
 	}
 	sprintf(hostname, "%s", entry.hostname);
+	#endif
 	return 1;
 }
 
@@ -90,7 +95,7 @@ int get_arp_list_json(char *json_buf, int buf_size)
 
 	ptr = buf;
 	
-	while (1) {
+	while (element < 5) {
 		ret = parse_arp_table(&ptr, &fileSize, ipAddr, macAddr, &flag, device);
 
 		if (ret < 0 )

@@ -26,8 +26,11 @@
 #include "dispatch.h"
 #include "cJSON.h"
 #include "utils.h"
-#include "json_cells.h"
 #include "dlog.h"
+#include "config.h"
+#include "sysinfo.h"
+
+#include "json_cells.h"
 
 static JSON_CELL_T *find_json_cell(JSON_CELL_T *object, const char *string)	
 {
@@ -132,7 +135,7 @@ int set_jsonpkt(cJSON *object)
 		}
 		else
 		{
-			apmib_ret = mib_set(idx->mib_index, (void *)setVal);
+			apmib_ret = nvram_set(idx->mib_index, (void *)setVal);
 			if(apmib_ret == 0)	
 			{
 				dlog_err("mib_set failed");
@@ -179,7 +182,7 @@ int get_jsonpkt(cJSON *json_obj, char *json_str, int max_length)
 		}
 		else
 		{
-			apmib_ret = mib_get(idx->mib_index, (void *)mibVal);
+			apmib_ret = nvram_get(idx->mib_index, (void *)mibVal);
 		}
 
 		if(apmib_ret == FAILD)

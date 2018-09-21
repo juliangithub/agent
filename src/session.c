@@ -30,6 +30,8 @@
 #include "transfer.h"
 #include "session.h"
 #include "dispatch.h"
+#include "dlog.h"
+
 static struct alarm_packet alarm_pkt = {0x0};
 
 int get_token(char *filename, char*token, size_t size)

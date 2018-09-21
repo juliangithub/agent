@@ -25,5 +25,8 @@ typedef struct config_pkt {
 
 
 int read_config();
+int nvram_set(unsigned int index, void * paramt);
+int nvram_get(unsigned int index, void * paramt);
+
 
 #endif //CONFIG_H

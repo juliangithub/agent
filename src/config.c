@@ -52,4 +52,13 @@ int read_config(CONFIG_PKT *config_pkt)
 	get_share_key(config_pkt->share_key);
 }
 
+int nvram_set(unsigned int index, void * paramt)
+{
+	return 0;
+}
+
+int nvram_get(unsigned int index, void * paramt)
+{
+	return 0;
+}
 
