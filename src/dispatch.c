@@ -9,9 +9,25 @@
 *	release notes：
 *
 ================================================================*/
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
+#include <sys/time.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <sys/ioctl.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+#include <sys/stat.h>
+#include <linux/wireless.h>
+#include <assert.h>
+
 #include "dispatch.h"
 #include "cJSON.h"
 #include "utils.h"
+#include "json_cells.h"
+#include "dlog.h"
 
 static JSON_CELL_T *find_json_cell(JSON_CELL_T *object, const char *string)	
 {
@@ -35,17 +51,17 @@ void json_set_init(int init_flag)
 		return;
 	}
 	else if(init_flag == INIT_FLAG_WIFI){
-		system("reinit_wifi");
+		//system("reinit_wifi");
 	}
 	else if(init_flag == INIT_FLAG_WAN){
-		system("reinit_wan");
+		//system("reinit_wan");
 	}
 	else if(init_flag == INIT_FLAG_MODE){
-		system("change_mode");
+		//system("change_mode");
 	}
 	else
 	{
-		system("reinit_all");
+		//system("reinit_all");
 	}
 
 }
@@ -109,7 +125,7 @@ int set_jsonpkt(cJSON *object)
 			apmib_ret = idx->mib_set((void *)setVal);
 			if(FAILD== apmib_ret)
 			{
-				dlog_err("mib_set failed")
+				dlog_err("mib_set failed");
 				json_ret = JSON_ERR_MEMORY;
 				return json_ret;
 			}
@@ -119,7 +135,7 @@ int set_jsonpkt(cJSON *object)
 			apmib_ret = mib_set(idx->mib_index, (void *)setVal);
 			if(apmib_ret == 0)	
 			{
-				dlog_err("mib_set failed")
+				dlog_err("mib_set failed");
 				json_ret = JSON_ERR_MEMORY;
 				return json_ret;
 			}
@@ -156,10 +172,10 @@ int get_jsonpkt(cJSON *json_obj, char *json_str, int max_length)
 		
 		memset(mibVal, 0x00, sizeof(mibVal));
 				
-		if(idx->cb_get!= NULL)
+		if(idx->mib_get!= NULL)
 		{
 			//some mib unit get no so simply as to update a value.need some special process.
-			apmib_ret = idx->cb_get((void*)mibVal);
+			apmib_ret = idx->mib_get((void*)mibVal);
 		}
 		else
 		{

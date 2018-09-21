@@ -30,5 +30,8 @@
 
 
 int get_arp_list_json(char *json_buf, int buf_size);  
+int cpu_used_percent(void *paramt);
+int ram_used_percent(void *paramt);
+
    
 #endif //SYSINFO_H

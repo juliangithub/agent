@@ -9,15 +9,27 @@
 *	release notes：
 *
 ================================================================*/
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
+#include <sys/time.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <sys/ioctl.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+#include <sys/stat.h>
+#include <linux/wireless.h>
 #include <assert.h>
 
 #include "utils.h"
 //#include "data_tree.h"
-//#include "config.h"
+#include "config.h"
 #include "cJSON.h"
 #include "transfer.h"
 #include "session.h"
-
+#include "dispatch.h"
 static struct alarm_packet alarm_pkt = {0x0};
 
 int get_token(char *filename, char*token, size_t size)
@@ -63,7 +75,7 @@ int token_generate(char *share_key)
 int host_mac()
 {
 	int ret;
-	unsigned char mac[128]={0x};	
+	unsigned char mac[128]={0x0};	
 	/*unimplemented get host mac addr*/
 	
 	ret = snprintf(alarm_pkt.host_mac, sizeof(alarm_pkt.host_mac), 
