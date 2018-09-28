@@ -130,7 +130,7 @@ static int data_gen(char *data, int max_len)
 	offset += snprintf(data+offset, max_len-offset, "\"token\":\"%s\",", alarm_pkt.token);
 	offset += snprintf(data+offset, max_len-offset, "\"host_mac\":\"%s\",", alarm_pkt.host_mac);
 	
-	offset += snprintf(data+offset, max_len-offset, "\"mac\":{");
+	offset += snprintf(data+offset, max_len-offset, "\"arp\":{");
 	offset += get_arp_list_json(data+offset, max_len - offset -2);
 	offset += snprintf(data+offset, max_len-offset, "}");
 
