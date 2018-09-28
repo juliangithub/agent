@@ -8,6 +8,7 @@
 #include "session.h"
 #include "utils.h"
 #include "dlog.h"
+#include "socket_api.h"
 
 static CONFIG_PKT g_conf_pkt = {0x0};
 static trsf_buf	g_trsfb = {
@@ -35,10 +36,10 @@ static int initial()
 		g_trsfb.data = packet;
 		g_trsfb.data_len = 0;
 	}
-	
+	return RET_SUCCESS;
 }
 
-static int clean_process(){
+static void clean_process(){
 	free(g_trsfb.data);
 }
 int

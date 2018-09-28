@@ -18,7 +18,7 @@ typedef struct trsf_buf_s
 {
 	const unsigned int  truesize;
     unsigned int  data_len;
-    unsigned char *data;
+    char *data;
 
 } trsf_buf, *p_trsf_buf ;
 

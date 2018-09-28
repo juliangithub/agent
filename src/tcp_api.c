@@ -30,7 +30,7 @@
 #include "utils.h"
 #include "dlog.h"
 
-int sock_tcp_send(int sock, unsigned char *data, unsigned int data_len)
+int sock_tcp_send(int sock, char *data, unsigned int data_len)
 {
 	int  ret = -1;
     struct timeval timeout;
@@ -77,7 +77,7 @@ int sock_tcp_send(int sock, unsigned char *data, unsigned int data_len)
 
 
 //return recv data length.
-int sock_tcp_recv(int sock, unsigned char *buf, unsigned int buf_len)
+int sock_tcp_recv(int sock, char *buf, unsigned int buf_len)
 {
 	int  ret = -1;
     struct timeval timeout;

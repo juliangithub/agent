@@ -32,25 +32,24 @@
 
 int init_socket(int *sock)
 {
-    int ret = -1;
+    int ret = RET_FAILD;
     int sockfd = -1;
 
     if(!sock)
     {
         dlog_err("Invalid params!");
-        goto end;
+        return RET_INVALID_PARMT;
     }
 
     sockfd = socket(AF_INET, SOCK_STREAM, 0);
     if(sockfd < 0)
     {
         dlog_err("Open socket failed.");
-        goto end;
+        return RET_ERR_GENERAL;
     }
     *sock = sockfd;
-    ret = 0;
+    ret = RET_SUCCESS;
 
-end:
     return ret;
 }
 
@@ -61,7 +60,6 @@ int connect_socket(int sock, char *url,int port)
     struct sockaddr_in  addr;
     struct hostent      *host;
     char *ip_str;
-    char *colon;
     char host_addr[256];                 /* ip, hostname, or ip:port */
 
     if(sock < 0 || !url)

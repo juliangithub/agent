@@ -9,6 +9,9 @@
 *	release notes：
 *
 ================================================================*/
+#include <stdio.h>
+#include <stdarg.h>
+
 #include "config.h"
 //#include "data_tree.h"
 #include "utils.h"
@@ -20,10 +23,10 @@ static int get_server_port(unsigned int* server_port)
 	return ret;
 }
 
-static int get_server_url(char *url)
+static int get_server_url(char *url, int max_size)
 {
 	int ret = -1;
-	snprintf(url, "%s", "www.uri.com");
+	snprintf(url, max_size, "%s", "www.uri.com");
 	if(ret !=0)
 	{
 	    ret = 0;
@@ -31,10 +34,10 @@ static int get_server_url(char *url)
 	return ret;
 }
 
-static int get_share_key(char *key)
+static int get_share_key(char *key,int max_size)
 {
 	int ret = -1;
-	snprintf(key, "%s", "share.key");
+	snprintf(key, max_size, "%s", "share.key");
 	if(ret !=0)
 	{
 	    ret = 0;
@@ -45,11 +48,14 @@ static int get_share_key(char *key)
 
 int read_config(CONFIG_PKT *config_pkt)
 {
+	int ret = RET_SUCCESS;
 	get_server_port(&(config_pkt->port));
 
-	get_server_url(config_pkt->addr);
+	get_server_url(config_pkt->addr, sizeof(config_pkt->addr));
 
-	get_share_key(config_pkt->share_key);
+	get_share_key(config_pkt->share_key, sizeof(config_pkt->addr));
+
+	return ret;
 }
 
 int nvram_set(unsigned int index, void * paramt)

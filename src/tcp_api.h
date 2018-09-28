@@ -12,8 +12,8 @@
 #ifndef _TCP_API_H
 #define _TCP_API_H
    
-int sock_tcp_send(int sock, unsigned char *data, unsigned int data_len);
+int sock_tcp_send(int sock, char *data, unsigned int data_len);
 
-int sock_tcp_recv(int sock, unsigned char *buf, unsigned int buf_len);
+int sock_tcp_recv(int sock, char *buf, unsigned int buf_len);
 
 #endif //TCP_API_H

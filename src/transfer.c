@@ -9,12 +9,14 @@
 *	release notes：
 *
 ================================================================*/
+#include <unistd.h>
+
 #include "transfer.h"
 #include "tcp_api.h"
-
+#include "utils.h"
 int sock_transfer(int sock, trsf_buf *trsfb)
 {
-	int ret = -1;
+	int ret = RET_SUCCESS;
 	sock_tcp_send( sock, trsfb->data,  trsfb->data_len);
 
 #if defined(__MINGW32__)
@@ -29,5 +31,6 @@ int sock_transfer(int sock, trsf_buf *trsfb)
 	{
 		trsfb->data_len = ret;
 	}
+	return ret;
 }
 

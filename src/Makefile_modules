@@ -7,8 +7,8 @@ RM = rm -rf
 LN = ln -sf
 
 DEBUG = 
-CFLAGS = $(DEBUG) -Wall -c
-#CFLAGS = $(DEBUG) 
+#CFLAGS = $(DEBUG) -Wall -c
+CFLAGS = $(DEBUG) 
 #SVN_REVISION = $(shell svn info |grep Revision|awk '{print $$2}') 
 REVISION = $(shell git rev-parse HEAD)
 CFLAGS  += -DREVISION="\"$(REVISION)"\"
@@ -58,6 +58,10 @@ LD_LIB += -L$(LIB_PATH)
 all:$(TARGET)
  
 $(TARGET) : $(OBJS_C) 
+	@ for i in $(DIRS); \
+	do \
+	make -C $$i; \
+	done
 	@ $(CC) $^ -o $@ $(LD_LIB) $(LIBS)
 	@ echo Create $(TARGET) ok...
 
@@ -69,3 +73,7 @@ $(OBJS_C):%.o : %.c
 .PHONY : clean
 clean:
 	@ $(RM) $(TARGET) $(OBJS_C)
+	@ for i in $(DIRS); \
+	do \
+	make clean -C $$i; \
+	done

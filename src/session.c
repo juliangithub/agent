@@ -31,6 +31,10 @@
 #include "session.h"
 #include "dispatch.h"
 #include "dlog.h"
+#include "sysinfo.h"
+
+extern int get_jsonpkt(cJSON *json_obj, char *json_str, int max_length);
+extern int set_jsonpkt(cJSON *object);
 
 static struct alarm_packet alarm_pkt = {0x0};
 
@@ -54,7 +58,6 @@ int get_token(char *filename, char*token, size_t size)
 
 int token_generate(char *share_key)
 {
-	int ret = 0;
 	int len = 0;
 	char token[TOKEN_MAX_LEN]={0x0};
 	char cmd[256]={0x0};
@@ -87,10 +90,10 @@ int host_mac()
 	return ret;
 }
 
-static int http_head_padding(HTTP_METHOD action,char *server_ip,char *url, char *ctype, unsigned char* buf, int clength)
+static unsigned int http_head_padding(HTTP_METHOD action,char *server_ip,char *url, char *ctype, char* buf, int clength)
 {   
 
-	int offset = 0;
+	unsigned int offset = 0;
     assert((buf)!=NULL);                        
     if (HTTP_GET == (action)) {                 
         strcat((buf), "GET ");}                 
@@ -138,13 +141,10 @@ static int data_gen(char *data, int max_len)
 }
 static int packet_gen(trsf_buf *trsfb, CONFIG_PKT *config)
 {
-	int ret;
 	int offset=0;
 	int max_len = 0;
-	char *packet = NULL;
 	char data[8192]={0x0};
 	int data_len = 0;
-	packet = trsfb->data;
 	max_len = trsfb->truesize - 2;
 
 	memset((void*)trsfb->data, 0x0, trsfb->truesize);
@@ -155,13 +155,12 @@ static int packet_gen(trsf_buf *trsfb, CONFIG_PKT *config)
 
 	trsfb->data_len = offset;
 
+	return offset;
 }
 
 int init_paket(trsf_buf *trsfb, CONFIG_PKT *config)
 {
 	int ret;
-	int offset=0;
-
 	//challenge padding.
 
 	ret = token_generate(config->share_key);
@@ -175,20 +174,18 @@ int init_paket(trsf_buf *trsfb, CONFIG_PKT *config)
 
 	dump_buf(trsfb->data, trsfb->truesize, __FILE__, __LINE__);
 
-	
+	return ret;
 }
 
 int parse_recv_data(trsf_buf *trsfb)
 {
-	int ret;
+	int ret = RET_FAILD;
 	JSON_REQ_MODE_T req_mode = JSON_REQ_NOSPT;
 	char json_buf[2048] = {0};
-	cJSON *element = NULL;
 	char *obj = NULL;
 
 	obj = strchr(trsfb->data, '{');
 	cJSON *root = cJSON_Parse(obj);
-	int err_code = 0;
 	if (!root) {
 		dlog_err("cJSON Parse faild !");
 		return RET_INVALID_PARMT;
@@ -202,7 +199,7 @@ int parse_recv_data(trsf_buf *trsfb)
 	{
 		cJSON_Delete(root);
 		JSON_RET(trsfb, JSON_ERR_BADVALUE);
-		return;
+		return ret;
 	}
 	dlog_debug("p_req_mode: %s \t", p_req_mode->valuestring);
 	if(strcmp(p_req_mode->valuestring, "get")==0)
@@ -217,7 +214,7 @@ int parse_recv_data(trsf_buf *trsfb)
 	{	
 		cJSON_Delete(root);
 		JSON_RET(trsfb, JSON_ERR_WRONGTYPE);
-		return;
+		return ret;
 	}
 	
 	switch(req_mode)
@@ -246,6 +243,6 @@ int parse_recv_data(trsf_buf *trsfb)
 
 	cJSON_Delete(root);
 
-	return RET_SUCCESS;
+	return ret;
 }
 

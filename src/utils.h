@@ -11,6 +11,7 @@
 ================================================================*/
 #ifndef _UTILS_H
 #define _UTILS_H
+#include "stdio.h"
 #include "dlog.h"
 typedef enum
 {
@@ -32,7 +33,7 @@ typedef enum
 		Computers the minimum of a and b. */
 #define MIN(a,b) ((a) > (b) ? (b) : (a))
 
-static inline int dump_buf(unsigned char *packet, int buf_len, char *filename, int line)
+static inline void dump_buf(char *packet, int buf_len, char *filename, int line)
 {
 	printf("*****************%s %d*********************\n", filename, line);
 	printf("%s \n", packet);
@@ -76,7 +77,9 @@ void sleep_interval_dynamic();
 #define JSON_GET_RET	"\"%s\":\"%s\","
 	
 #define JSON_RET(req, err_code) { \
-		printf(req, (err_code==0)?"{\"result\":\"success\"}":"{\"result\":\"fail\"}"); }
+		printf((err_code==0)?"{\"result\":\"success\"}":"{\"result\":\"fail\"}"); \
+		printf("\n %s\n", req->data);\
+}
 
 
 #endif //UTILS_H

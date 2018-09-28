@@ -69,9 +69,9 @@ int get_arp_list_json(char *json_buf, int buf_size)
 	FILE *fp;
 	int nBytesSent=0;
 	int element=0, ret;
-	char ipAddr[40], macAddr[40], liveTime[80], hostname[80],*buf=NULL, *ptr, tmpBuf[100];
+	char ipAddr[40], macAddr[40],*buf=NULL, *ptr=NULL;
 	struct stat status;
-	int pid;
+
 	unsigned long fileSize=0;
 	char json_item[128];
 	int item_len;
